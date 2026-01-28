@@ -21,86 +21,100 @@ public class LibraryService {
     private Map<Long, Member> members = new HashMap<Long, Member>();
     private Map<Long, BorrowingRecord> borrowingRecords = new HashMap<Long, BorrowingRecord>();
 
+    // ==================== [เพิ่มส่วนนี้] Constructor เพื่อให้รันแล้วมีข้อมูลโชว์ทันที ====================
+    public LibraryService() {
+        // ID: 1, ชื่อ: Java Beginner, คนแต่ง: Jet, ปี: 2024, หมวด: Education, จำนวน: 5
+        books.put(1L, new Book(1L, "Java Beginner", "Jet", 2024, "Education", 5));
+    }
+
     // ==================== Book Methods ====================
 
-    // Get all books
     public Collection<Book> getAllBooks() {
         return books.values();
     }
 
-    // Get a book by ID
     public Book getBookById(Long id) {
         return books.get(id);
     }
 
-    // Add a new book
     public void addBook(Book book) {
         books.put(book.getId(), book);
     }
 
-    // Update a book
     public void updateBook(Book updatedBook) {
         books.put(updatedBook.getId(), updatedBook);
     }
 
-    // Delete a book by ID
     public void deleteBook(Long id) {
         books.remove(id);
     }
 
     // ==================== Member Methods ====================
 
-    // Get all members
     public Collection<Member> getAllMembers() {
         return members.values();
     }
 
-    // Get a member by ID
     public Member getMemberById(Long id) {
         return members.get(id);
     }
 
-    // Add a new member
     public void addMember(Member member) {
         members.put(member.getId(), member);
     }
 
-    // Update a member
     public void updateMember(Member updatedMember) {
         members.put(updatedMember.getId(), updatedMember);
     }
 
-    // Delete a member by ID
     public void deleteMember(Long id) {
         members.remove(id);
     }
 
     // ==================== BorrowingRecord Methods ====================
 
-    // Get all borrowing records
     public Collection<BorrowingRecord> getAllBorrowingRecords() {
         return borrowingRecords.values();
     }
 
-    // Borrow a book (create a new borrowing record)
     public void borrowBook(BorrowingRecord record) {
-        System.out.println(record);
-        // Set borrow date and due date (e.g., due date = borrow date + 14 days)
         record.setBorrowDate(LocalDate.now());
         record.setDueDate(LocalDate.now().plusDays(14));
         borrowingRecords.put(record.getId(), record);
-        // Decrease the available copies of the book
-        System.out.println("record.getBookId() " + record.getBookId());
-        System.out.println("book " + books.get(record.getBookId()));
+        
         Book book = books.get(record.getBookId());
-        book.setAvailableCopies(book.getAvailableCopies() - 1);
+        if (book != null) {
+            book.setAvailableCopies(book.getAvailableCopies() - 1);
+        }
     }
 
-    // Return a book (update the borrowing record with the return date)
     public void returnBook(Long recordId, LocalDate returnDate) {
         BorrowingRecord record = borrowingRecords.get(recordId);
-        // Increase the available copies of the book
-        Book book = books.get(record.getBookId());
-        book.setAvailableCopies(book.getAvailableCopies() +1 );
+        if (record != null) {
+            Book book = books.get(record.getBookId());
+            if (book != null) {
+                book.setAvailableCopies(book.getAvailableCopies() + 1);
+            }
+        }
+    }
+
+    // ==================== Lab 4: Search Methods ====================
+
+    public List<Book> getBooksByGenre(String genre) {
+        return books.values().stream()
+                .filter(book -> book.getGenre() != null && book.getGenre().equalsIgnoreCase(genre))
+                .collect(Collectors.toList());
+    }
+
+    public List<Book> getBooksByAuthor(String author) {
+        return books.values().stream()
+                .filter(book -> book.getAuthor() != null && book.getAuthor().equalsIgnoreCase(author))
+                .collect(Collectors.toList());
+    }
+
+    public List<BorrowingRecord> getBooksDueOnDate(LocalDate dueDate) {
+        return borrowingRecords.values().stream()
+                .filter(record -> record.getDueDate() != null && record.getDueDate().equals(dueDate))
+                .collect(Collectors.toList());
     }
 }
