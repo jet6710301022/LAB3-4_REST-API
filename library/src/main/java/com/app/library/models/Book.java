@@ -1,7 +1,17 @@
 package com.app.library.models;
 
+// --- ส่วนที่เพิ่มเข้ามาสำหรับ Lab 5 (JPA) ---
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+// ---------------------------------------
+
+@Entity // บอกให้ Spring สร้างตารางชื่อ Book ใน Database
 public class Book {
 
+    @Id // กำหนดให้เป็น Primary Key
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // ให้ DB รันเลข ID ให้เองอัตโนมัติ
     private Long id;
 
     private String title;
@@ -10,10 +20,10 @@ public class Book {
     private String genre;
     private int availableCopies;
 
-    // Default constructor
+    // Default constructor (จำเป็นต้องมีสำหรับ JPA)
     public Book() {}
 
-    // Parameterized constructor
+    // Parameterized constructor (โค้ดเดิมของคุณ)
     public Book(String title, String author, int publicationYear, String genre, int availableCopies) {
         this.title = title;
         this.author = author;
@@ -22,7 +32,7 @@ public class Book {
         this.availableCopies = availableCopies;
     }
 
-    // Getters and Setters
+    // --- Getters and Setters (โค้ดเดิมของคุณ) ---
     public Long getId() {
         return id;
     }
@@ -71,7 +81,7 @@ public class Book {
         this.availableCopies = availableCopies;
     }
 
-    // toString
+    // toString (โค้ดเดิมของคุณ)
     @Override
     public String toString() {
         return "Book{" +
